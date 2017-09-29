@@ -69,7 +69,7 @@ public class Lambdas01 {
             person.print();
         }
 
-        //Assert
+        //Asserts
         assertNotNull(person);
         assertEquals(new Person("name 1", "lastName 2", 40), person);
     }
@@ -82,6 +82,7 @@ public class Lambdas01 {
                 new Person("name 2", "lastName 1", 30)
         );
 
+        //Optional is for only one object. It can also be empty.
         final Optional<Person> personOptional =
                 FluentIterable.from(persons)
                         .firstMatch(new Predicate<Person>() {
@@ -94,6 +95,10 @@ public class Lambdas01 {
 
         if (personOptional.isPresent()) {
             personOptional.get().print();
+
+            //Asserts
+            assertNotNull(personOptional.get());
+            assertEquals(new Person("name 1", "lastName 2", 40), personOptional.get());
         }
     }
 
