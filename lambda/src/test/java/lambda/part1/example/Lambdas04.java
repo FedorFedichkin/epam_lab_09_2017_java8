@@ -30,7 +30,7 @@ public class Lambdas04 {
 
         // statement lambda
         runFromCurrentThread(() -> {
-            System.out.println("before print");
+            System.out.println("Before print");
             person.print();
         });
         // expression lambda
