@@ -26,8 +26,19 @@ public class Lambdas02 {
                 new Person("name 2", "lastName 1", 30)
         };
 
-        Arrays.sort(persons, (o1, o2) -> o1.getLastName().compareTo(o2.getLastName()));
+
 //        Arrays.sort(persons, Comparator.comparing(p -> p.getLastName()));
+
+
+        //Lambda выражение
+        Arrays.sort(persons, (o1, o2) -> o1.getLastName().compareTo(o2.getLastName()));
+
+        //Lambda выражение, если мы добавляем еще одну строку (sout)
+        Arrays.sort(persons, (o1, o2) -> {
+            System.out.println("ddd");
+            return o1.getLastName().compareTo(o2.getLastName());
+        });
+
 
         assertArrayEquals(persons, new Person[]{
                 new Person("name 2", "lastName 1", 30),
