@@ -67,7 +67,7 @@ public class Lambdas03 {
 
     private final String delimiter = "-";
 
-    //for non-static method
+    //non-static method
     private String stringSumWithDelimiter(String s1, String s2) {
         return s1 + delimiter + s2;
     }
