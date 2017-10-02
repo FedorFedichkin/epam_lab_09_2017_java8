@@ -49,11 +49,15 @@ public class Lambdas04 {
     public void closure_this_lambda() {
         _person = new Person("John", "Galt", 33);
 
+        //замыкается на this
         runFromCurrentThread(() -> /*this.*/_person.print());
+        //замыкается на конкетном _person
         runFromCurrentThread(/*this.*/_person::print);
 
         _person = new Person("a", "a", 1);
 
+        runFromCurrentThread(() -> /*this.*/_person.print());
+        runFromCurrentThread(/*this.*/_person::print);
     }
 
 
