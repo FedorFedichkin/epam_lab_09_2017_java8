@@ -46,6 +46,10 @@ public class Lambdas02Exercise {
                 FluentIterable.from(persons)
                         .firstMatch(p -> p != null && (p.getAge() == 30));
 
+        if (personOptional.isPresent()) {
+            personOptional.get().print();
+        }
+
         assertEquals(new Person("name 1", "lastName 2", 30), personOptional.get());
     }
 }
