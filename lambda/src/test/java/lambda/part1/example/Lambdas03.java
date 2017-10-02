@@ -60,9 +60,9 @@ public class Lambdas03 {
     @Test
     public void strSum() {
         //Class method-reference lambda
-        GenericSum<String> sum = Lambdas03::stringSum;
+        GenericSum<String> sumReference = Lambdas03::stringSum;
 
-        assertEquals(sum.sum("a", "b"), "ab");
+        assertEquals(sumReference.sum("a", "b"), "ab");
     }
 
     private final String delimiter = "-";
@@ -74,9 +74,9 @@ public class Lambdas03 {
 
     @Test
     public void strSum2() {
-        final GenericSum<String> sum = this::stringSumWithDelimiter;
+        final GenericSum<String> sumReference = this::stringSumWithDelimiter;
 
-        assertEquals(sum.sum("a", "b"), "a-b");
+        assertEquals(sumReference.sum("a", "b"), "a-b");
     }
 
 }
