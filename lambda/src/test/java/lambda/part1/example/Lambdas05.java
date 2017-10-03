@@ -9,14 +9,18 @@ import java.util.function.Function;
 
 @SuppressWarnings("Convert2MethodRef")
 public class Lambdas05 {
-    private <T> void printResult(T t, Function<T, String> f) {
-        System.out.println(f.apply(t));
+    private <T> void printResult(T t, Function<T, String> function) {
+        System.out.println(function.apply(t));
     }
 
     private final Person person = new Person("John", "Galt", 33);
 
     @Test
     public void printField() {
+        //объект person типа Person, который указан первым параметром, неявно становится первым аргументом тут:
+        //Function<T, String> function.
+        //Person::getLastName здесь выступает в роли Function<T, String> function, которая из неявно переданного
+        //объекта типа Person "достает" объект типа String при помощи метода getLastName
         printResult(person, Person::getLastName);
 
 //        BiFunction<Person, String, Person> changeFirstName = Person::withFirstName;
