@@ -88,7 +88,7 @@ public class Lambdas03 {
         // Object method-reference lambda
         GenericSum<String> sum = this::stringSumWithDelimiter;
 
-        assertEquals(sumReference.sum("a", "b"), "a-b");
+        assertEquals(sum.sum("a", "b"), "a-b");
     }
 
 }
