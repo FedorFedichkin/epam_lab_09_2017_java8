@@ -49,9 +49,9 @@ public class Lambdas04 {
     public void closure_this_lambda() {
         _person = new Person("John", "Galt", 33);
 
-        //замыкается на this
+        //lambda expression; замыкается на this
         runFromCurrentThread(() -> /*this.*/_person.print());
-        //замыкается на конкетном _person
+        //method-reference; замыкается на конкетном _person
         runFromCurrentThread(/*this.*/_person::print);
 
         _person = new Person("a", "a", 1);
@@ -61,10 +61,11 @@ public class Lambdas04 {
     }
 
 
-    private Runnable runLater(Runnable r) {
+    //runnable будет вызван не сразу, а будет просто сформирована новая лямбда
+    private Runnable runLaterFromCurrentThread(Runnable runnable) {
         return () -> {
             System.out.println("before run");
-            r.run();
+            runnable.run();
         };
     }
 
@@ -73,13 +74,17 @@ public class Lambdas04 {
     public void closure_this_lambda2() {
         _person = new Person("John", "Galt", 33);
 
-        //final Person person = _person;
-        final Runnable r1 = runLater(() -> _person.print());
-        final Runnable r2 = runLater(get_person()::print);
+        //замыкаемся на this
+        final Runnable r1 = runLaterFromCurrentThread(() -> _person.print());
+        //замыкаемся на самом Person
+        final Runnable r2 = runLaterFromCurrentThread(get_person()::print);
 
         _person = new Person("a", "a", 1);
 
+        //а, а, 1, так как на момент вызова поле объекта, на который ведет ссылка _person, уже поменялось
         r1.run();
+        //John, Galt, 33, так как выше замкнулись на самом объекте Person. Не смотря на то, что ссылка _person уже
+        //указывает на другой объект, будет выведена инфа о первом объекте Person
         r2.run();
 
     }
