@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@SuppressWarnings("Convert2MethodRef")
 public class Lambdas05 {
     private <T> void printResult(T t, Function<T, String> function) {
         System.out.println(function.apply(t));
@@ -30,7 +29,8 @@ public class Lambdas05 {
 
 
     private static class PersonHelper {
-        public static String stringRepresentation(Person person) {
+
+        static String stringRepresentation(Person person) {
             return person.toString();
         }
     }

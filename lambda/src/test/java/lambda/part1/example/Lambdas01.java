@@ -34,6 +34,8 @@ public class Lambdas01 {
         };
 
         Arrays.sort(persons, new Comparator<Person>() {
+
+            @Override
             public int compare(Person o1, Person o2) {
                 return o1.getLastName().compareTo(o2.getLastName());
             }
@@ -57,7 +59,6 @@ public class Lambdas01 {
 
         //Code
         Person person = null;
-
         for (Person p : persons) {
             if ("name 1".equals(p.getFirstName())) {
                 person = p;
@@ -112,12 +113,12 @@ public class Lambdas01 {
 
         final Map<String, Person> personByLastName =
                 FluentIterable.from(persons)
-                        .uniqueIndex(new Function<Person, String>() {
-                            @Override
-                            public String apply(Person person) {
-                                return person.getLastName();
-                            }
-                        });
+                              .uniqueIndex(new Function<Person, String>() {
+                                @Override
+                                public String apply(Person person) {
+                                    return person.getLastName();
+                                }
+                              });
 
         assertEquals(personByLastName.get("lastName 3"), new Person("name 3", "lastName 3", 20));
     }

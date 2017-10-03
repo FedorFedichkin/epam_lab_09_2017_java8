@@ -24,6 +24,7 @@ public class Lambdas04 {
         //person = new Person("a", "a", 44);
     }
 
+
     @Test
     public void closure_lambda() {
         Person person = new Person("John", "Galt", 33);
@@ -43,6 +44,18 @@ public class Lambdas04 {
 
     public Person get_person() {
         return _person;
+    }
+
+    static void staticMethod() {
+        Runnable run = () -> {
+            System.out.println();
+        };
+    }
+
+    void nonStaticMethod() {
+        Runnable run = () -> {
+            System.out.println(this);
+        };
     }
 
     @Test

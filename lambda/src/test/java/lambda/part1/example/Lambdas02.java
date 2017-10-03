@@ -57,7 +57,7 @@ public class Lambdas02 {
 
         final Optional<Person> personOptional =
                 FluentIterable.from(persons)
-                        .firstMatch(p -> p != null && p.getFirstName().equals("name 1"));
+                              .firstMatch(p -> p != null && p.getFirstName().equals("name 1"));
 
         if (personOptional.isPresent()) {
             personOptional.get().print();
@@ -74,7 +74,7 @@ public class Lambdas02 {
 
         final ImmutableMap<String, Person> personByLastName =
                 FluentIterable.from(persons)
-                        .uniqueIndex(person -> person.getLastName());
+                              .uniqueIndex(person -> person.getLastName());
 
         assertEquals(personByLastName.get("lastName 2"), new Person("name 1", "lastName 2", 40));
     }
