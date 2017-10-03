@@ -51,7 +51,7 @@ public class Lambdas04 {
 
         //lambda expression; замыкается на this
         runFromCurrentThread(() -> /*this.*/_person.print());
-        //method-reference; замыкается на конкетном _person
+        //method-reference; замыкается на конкетном объекте Person, даже если указать this явно
         runFromCurrentThread(/*this.*/_person::print);
 
         _person = new Person("a", "a", 1);
