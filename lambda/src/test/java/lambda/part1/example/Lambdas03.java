@@ -12,6 +12,7 @@ public class Lambdas03 {
 
     @FunctionalInterface
     private interface GenericSum<T> {
+
         T sum(T a, T b);
 
         default T twice(T t) {
