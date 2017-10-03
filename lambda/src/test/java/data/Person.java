@@ -19,8 +19,14 @@ public class Person {
         return firstName;
     }
 
-    public String getLastName() {
+
+    //Person this можно указать явно, а можно и ничего не указывать - Person this будет подставлен автоматически
+    public String getLastName(Person this) {
         return lastName;
+    }
+
+    public static String getLastNameStatic(Person person) {
+        return person.getLastName();
     }
 
     public static String getLastName2(Person person) {
