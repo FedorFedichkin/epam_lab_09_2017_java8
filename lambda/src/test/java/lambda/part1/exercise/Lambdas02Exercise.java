@@ -36,7 +36,7 @@ public class Lambdas02Exercise {
                 new Person("name 1", "lastName 2", 30),
                 new Person("name 2", "lastName 1", 30)
         );
-        
+
         final Optional<Person> personOptional =
                 persons.stream().filter(person -> (person.getAge() == 30)).findFirst();
 

@@ -16,23 +16,33 @@ public class Lambdas03Exercise {
         }
     }
 
+    // Use anonymous class
     @Test
     public void generic0() {
-        final GenericProduct<Integer> prod = null; // Use anonymous class
+        final GenericProduct<Integer> prod = new GenericProduct<Integer>() {
+            @Override
+            public Integer prod(Integer a, int i) {
+                return (a * i);
+            }
+        };
 
         assertEquals(prod.prod(3, 2), Integer.valueOf(6));
     }
 
+    // Use statement lambda
     @Test
     public void generic1() {
-        final GenericProduct<Integer> prod = null; // Use statement lambda
+        final GenericProduct<Integer> prod = (a, i) -> {
+            return (a * i);
+        };
 
         assertEquals(prod.prod(3, 2), Integer.valueOf(6));
     }
 
+    // Use expression lambda
     @Test
     public void generic2() {
-        final GenericProduct<Integer> prod = null; // Use expression lambda
+        final GenericProduct<Integer> prod = (a, i) -> (a * i);
 
         assertEquals(prod.prod(3, 2), Integer.valueOf(6));
     }
@@ -45,9 +55,17 @@ public class Lambdas03Exercise {
         return sb.toString();
     }
 
+    // use stringProd;
     @Test
     public void strSum() {
-        final GenericProduct<String> prod = null; // use stringProd;
+        final GenericProduct<String> prod = (s, i) -> stringProd(s, i);
+
+        assertEquals(prod.prod("a", 2), "aa");
+    }
+
+    @Test
+    public void strSumMetRef() {
+        final GenericProduct<String> prod = Lambdas03Exercise::stringProd;
 
         assertEquals(prod.prod("a", 2), "aa");
     }
@@ -62,12 +80,19 @@ public class Lambdas03Exercise {
         return sj.toString();
     }
 
+    // use stringSumWithDelimeter;
     @Test
     public void strSum2() {
-        final GenericProduct<String> prod = null; // use stringSumWithDelimeter;
+        final GenericProduct<String> prod = (s, i) -> stringSumWithDelimeter(s, i);
 
         assertEquals(prod.prod("a", 3), "a-a-a");
     }
 
+    @Test
+    public void strSum2MetRef() {
+        final GenericProduct<String> prod = this::stringSumWithDelimeter;
+
+        assertEquals(prod.prod("a", 3), "a-a-a");
+    }
 
 }
