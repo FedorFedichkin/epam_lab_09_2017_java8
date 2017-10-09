@@ -51,11 +51,13 @@ public class FilterMap {
 
         public <R> LazyCollectionHelper<R> map(Function<T, R> function) {
             // TODO
-            throw new UnsupportedOperationException();
+            this.list.forEach(function::apply);
+            //throw new UnsupportedOperationException();
         }
 
         public List<T> force() {
             // TODO
+            //return new LazyCollectionHelper<T>(list).filter(actions);
             throw new UnsupportedOperationException();
         }
     }
