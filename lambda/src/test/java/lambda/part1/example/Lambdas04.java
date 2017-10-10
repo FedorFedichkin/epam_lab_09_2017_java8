@@ -97,7 +97,7 @@ public class Lambdas04 {
     private Runnable runLaterFromCurrentThread(Runnable runnable) {
         return () -> {
             System.out.println("before runFromCurrentThread");
-            r.run();
+            runnable.run();
         };
     }
 
