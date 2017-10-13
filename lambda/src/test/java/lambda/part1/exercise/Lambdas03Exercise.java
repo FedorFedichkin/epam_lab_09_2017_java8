@@ -30,7 +30,10 @@ public class Lambdas03Exercise {
 
     @Test
     public void generic1() {
-        final GenericProduct<Integer> prod = (a, b) -> { return a * b; }; // Use statement lambda
+        final GenericProduct<Integer> prod = (a, b) -> {
+            System.out.println("two-statement lambda");
+            return a * b;
+        }; // Use statement lambda
 
         assertEquals(prod.prod(3, 2), Integer.valueOf(6));
     }
