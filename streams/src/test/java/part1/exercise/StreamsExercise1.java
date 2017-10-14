@@ -6,6 +6,8 @@ import data.Person;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,7 +37,14 @@ public class StreamsExercise1 {
                         new JobHistoryEntry(2, "dev", "google")
         )));
 
-        List<Person> epamEmployees = null;// TODO all persons with experience in epam
+        List<Person> epamEmployees =  employees.stream()
+                .filter(e -> e.getJobHistory()
+                        .stream()
+                        .anyMatch(jobHistoryEntry -> "epam".equals(jobHistoryEntry.getEmployer())))
+                .map(Employee::getPerson)
+                .collect(Collectors.toList());// TODO all persons with experience in epam
+
+
 
         assertEquals(Arrays.asList(
                 new Person("John", "Galt", 20),
@@ -68,7 +77,14 @@ public class StreamsExercise1 {
                                 new JobHistoryEntry(2, "dev", "google")
                         )));
 
-        List<Person> epamEmployees = null;// TODO all persons with first experience in epam
+
+        Predicate<Employee> startedFromEpam = employee ->
+                !employee.getJobHistory().isEmpty()
+                        && "epam".equals(employee.getJobHistory().get(0).getEmployer());
+        List<Person> epamEmployees = employees.stream()
+                .filter(startedFromEpam)
+                .map(Employee::getPerson)
+                .collect(Collectors.toList());// TODO all persons with first experience in epam
 
         assertEquals(Arrays.asList(
                 new Person("John", "Galt", 20),
@@ -101,8 +117,11 @@ public class StreamsExercise1 {
         )));
 
 
-        int result = 0; // TODO sum
+        int result = employees.stream()
+                .unordered()
+                .flatMap(employee -> employee.getJobHistory().stream())
+                .filter(entry -> "epam".equals(entry.getEmployer()))
+                .collect(Collectors.summingInt(JobHistoryEntry::getDuration)); // TODO sum суммировать все годы в епам
         assertEquals(11, result);
     }
-
 }
