@@ -4,6 +4,7 @@ import data.Person;
 import org.junit.Test;
 
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
@@ -27,11 +28,11 @@ public class ArrowNotationExercise {
     // compareAges: (Person, Person) -> boolean
     @Test
     public void compareAgesTest() {
-//        BiFunction<Person, Person, Boolean> compareAges = ((person1, person2) -> compareAges(person1, person2));
-        BiFunction<Person, Person, Boolean> compareAges = ArrowNotationExercise::compareAges;
+//        BiPredicate<Person, Person> compareAges = ((person1, person2) -> compareAges(person1, person2));
+        BiPredicate<Person, Person> compareAges = ArrowNotationExercise::compareAges;
 
 //        throw new UnsupportedOperationException("Not implemented");
-        assertEquals(true, compareAges.apply(new Person("a", "b", 22), new Person("c", "d", 22)));
+        assertEquals(true, compareAges.test(new Person("a", "b", 22), new Person("c", "d", 22)));
     }
 
     // TODO
