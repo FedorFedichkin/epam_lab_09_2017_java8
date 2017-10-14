@@ -30,5 +30,41 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.epam.courses</groupId>
+            <artifactId>lambda</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.courses</groupId>
+            <artifactId>java8</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.courses</groupId>
+            <artifactId>lambda</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.courses</groupId>
+            <artifactId>java8</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.courses</groupId>
+            <artifactId>lambda</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.epam.courses</groupId>
+            <artifactId>java8</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

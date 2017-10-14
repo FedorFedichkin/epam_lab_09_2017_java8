@@ -32,8 +32,11 @@ public class Mapping {
         // [T] -> (T -> R) -> [R]
         // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
         public <R> MapHelper<R> map(Function<T, R> f) {
-            // TODO
-            throw new UnsupportedOperationException();
+            List<R> result = new ArrayList<>(list.size());
+            for (T value: list) {
+                result.add(f.apply(value));
+            }
+            return new MapHelper<R>(result);
         }
 
         // [T] -> (T -> [R]) -> [R]
@@ -76,6 +79,9 @@ public class Mapping {
 
         final List<Employee> mappedEmployees =
                 new MapHelper<>(employees)
+                        .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
+                        .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
+                        .map(e -> e.withJobHistory(replaceQa(e.getJobHistory())))
                 /*
                 .map(TODO) // change name to John .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
                 .map(TODO) // add 1 year to experience duration .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
@@ -106,6 +112,24 @@ public class Mapping {
                 );
 
         assertEquals(mappedEmployees, expectedResult);
+    }
+
+    private List<JobHistoryEntry> replaceQa(List<JobHistoryEntry> jobHistory) {
+        for (JobHistoryEntry jobHistoryEntry : jobHistory) {
+            if (jobHistoryEntry.getPosition().equals("qa")) {
+                jobHistoryEntry.withPosition("QA");
+
+            }
+        }
+        return jobHistory;
+    }
+
+    private static List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
+        List<JobHistoryEntry> jobHistoryEntryList = new ArrayList<>(jobHistory.size());
+        for (JobHistoryEntry jobHistoryEntry: jobHistory) {
+            jobHistoryEntryList.add(jobHistoryEntry.withDuration(jobHistoryEntry.getDuration() + 1));
+        }
+        return jobHistoryEntryList;
     }
 
 
