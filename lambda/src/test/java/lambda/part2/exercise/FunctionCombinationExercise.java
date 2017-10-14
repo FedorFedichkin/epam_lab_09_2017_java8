@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.util.function.Predicate;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -21,22 +20,19 @@ public class FunctionCombinationExercise {
         assertFalse(validate.test(new Person("a", "", 0)));
     }
 
-    // TODO
+    // TODO // done
     // negate1: (Person -> boolean) -> (Person -> boolean)
-    private Predicate<Person> negate1(Predicate<Person> test) {
-        return p -> {
-            // TODO
-            throw new UnsupportedOperationException();
-        };
+    private Predicate<Person> negate1(Predicate<Person> personPredicate) {
+        return p -> !personPredicate.test(p);
+//            throw new UnsupportedOperationException();
     }
 
-    // TODO
+    // TODO // done
     // validateFirstNameAndLastName: (Person -> boolean, Person -> boolean) -> (Person -> boolean)
-    private Predicate<Person> validateFirstNameAndLastName(Predicate<Person> t1, Predicate<Person> t2) {
-        return p -> {
-            // TODO
-            throw new UnsupportedOperationException();
-        };
+    private Predicate<Person> validateFirstNameAndLastName(Predicate<Person> predicate1, Predicate<Person> predicate2) {
+        return p -> predicate1.test(p) && predicate2.test(p);
+
+//            throw new UnsupportedOperationException();
     }
 
     @Test
@@ -54,18 +50,18 @@ public class FunctionCombinationExercise {
         assertFalse(validate.test(new Person("a", "", 0)));
     }
 
-    // TODO
+    // TODO // done
     // negate: (T -> boolean) -> (T -> boolean)
-    private <T> Predicate<T> negate(Predicate<T> test) {
-        // TODO
-        throw new UnsupportedOperationException();
+    private <T> Predicate<T> negate(Predicate<T> predicate) {
+        return t -> !predicate.test(t);
+//        throw new UnsupportedOperationException();
     }
 
-    // TODO
+    // TODO // done
     // and: (T -> boolean, T -> boolean) -> (T -> boolean)
     private <T> Predicate<T> and(Predicate<T> t1, Predicate<T> t2) {
-        // TODO
-        throw new UnsupportedOperationException();
+        return t -> t1.test(t) && t2.test(t);
+//        throw new UnsupportedOperationException();
     }
 
     @Test
@@ -73,10 +69,10 @@ public class FunctionCombinationExercise {
         Predicate<Person> hasEmptyFirstName = p -> p.getFirstName().isEmpty();
         Predicate<Person> hasEmptyLastName = p -> p.getLastName().isEmpty();
 
-        Predicate<Person> validateFirstName = null; // TODO use negate
-        Predicate<Person> validateLastName = null; // TODO use negate
+        Predicate<Person> validateFirstName = hasEmptyFirstName.negate(); // TODO use negate // done
+        Predicate<Person> validateLastName = hasEmptyLastName.negate(); // TODO use negate // done
 
-        Predicate<Person> validate = null; // TODO use and
+        Predicate<Person> validate = validateFirstName.and(validateLastName); // TODO use and // done
 
         assertTrue(validate.test(new Person("a", "b", 0)));
         assertFalse(validate.test(new Person("", "b", 0)));
@@ -88,10 +84,10 @@ public class FunctionCombinationExercise {
         Predicate<Person> hasEmptyFirstName = p -> p.getFirstName().isEmpty();
         Predicate<Person> hasEmptyLastName = p -> p.getLastName().isEmpty();
 
-        Predicate<Person> validateFirstName = null; // TODO use Predicate::negate
-        Predicate<Person> validateLastName = null; // TODO use Predicate::negate
+        Predicate<Person> validateFirstName = p -> hasEmptyFirstName.negate().test(p); // TODO use Predicate->negate // done
+        Predicate<Person> validateLastName = p -> hasEmptyLastName.negate().test(p); // TODO use Predicate->negate // done
 
-        Predicate<Person> validate = null; // TODO use Predicate::and
+        Predicate<Person> validate = p -> validateFirstName.and(validateLastName).test(p); // TODO use Predicate->and // done
 
         assertTrue(validate.test(new Person("a", "b", 0)));
         assertFalse(validate.test(new Person("", "b", 0)));
