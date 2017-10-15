@@ -5,7 +5,6 @@ import data.JobHistoryEntry;
 import data.Person;
 import org.junit.Test;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
