@@ -62,7 +62,7 @@ public class FunctionCombinationExercise {
         // TODO
         Objects.requireNonNull(t1);
         Objects.requireNonNull(t2);
-        return (t) ->  t1.test(t) && t2.test(t);
+        return (t) -> t1.test(t) && t2.test(t);
     }
 
     @Test
@@ -80,7 +80,6 @@ public class FunctionCombinationExercise {
         assertFalse(validate.test(new Person("a", "", 0)));
     }
 
-
     @Test
     public void personHasNotEmptyLastNameAndFirstName3() {
         Predicate<Person> hasEmptyFirstName = p -> p.getFirstName().isEmpty();
@@ -95,5 +94,4 @@ public class FunctionCombinationExercise {
         assertFalse(validate.test(new Person("", "b", 0)));
         assertFalse(validate.test(new Person("a", "", 0)));
     }
-
 }

@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -44,6 +45,7 @@ public class FilterMap {
             this.actions = actions;
             this.list = list;
         }
+
 
         public LazyCollectionHelper(List<T> list) {
             this(list, new ArrayList<>());
@@ -91,12 +93,12 @@ public class FilterMap {
         List<Integer> integers = Arrays.asList(1, 2, 100, 110, 200, 300, 500);
 
 
-//        LazyCollectionHelper<Integer> lazy = new LazyCollectionHelper<>(integers);
-//        LazyCollectionHelper<Integer> lazy2 = lazy.filter(val -> val != 0);
-//        LazyCollectionHelper<Integer> lazy3 = lazy2.filter(val -> val < 0);
-//        LazyCollectionHelper<Double> lazy4 = lazy3.map(Double::valueOf);
-//
-//        List<Double> lazyResult = lazy4.force();
+        LazyCollectionHelper<Integer> lazy = new LazyCollectionHelper<>(integers);
+        LazyCollectionHelper<Integer> lazy2 = lazy.filter(val -> val != 0);
+        LazyCollectionHelper<Integer> lazy3 = lazy2.filter(val -> val < 0);
+        LazyCollectionHelper<Double> lazy4 = lazy3.map(Double::valueOf);
+
+        List<Double> lazyResult = lazy4.force();
 
 
         List<String> result = new LazyCollectionHelper<>(integers).filter(val -> val > 10)
