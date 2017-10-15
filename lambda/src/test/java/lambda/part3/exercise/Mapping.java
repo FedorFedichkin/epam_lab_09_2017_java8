@@ -5,6 +5,7 @@ import data.JobHistoryEntry;
 import data.Person;
 import org.junit.Test;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +32,9 @@ public class Mapping {
         // ([T], T -> R) -> [R]
         public <R> MapHelper<R> map(Function<T, R> f) {
             // TODO
-            throw new UnsupportedOperationException();
+            final List<R> result = new ArrayList<>();
+            list.forEach(t -> result.add(f.apply(t)));
+            return new MapHelper<>(result);
         }
 
         // ([T], T -> [R]) -> [R]
