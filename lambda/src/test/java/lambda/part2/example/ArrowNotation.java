@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ArrowNotation {
 
-    // String -> int
+    // нотация стрелочка, String -> int
     private static int strLength(String s) {
         return s.length();
     }
@@ -42,7 +42,7 @@ public class ArrowNotation {
         assertEquals(5, lastNameLength.apply(new Person("a", "abcde", 0)).intValue());
     }
 
-    // (Person, String) -> boolean
+    // (Person, String) -> boolean - это предикат (что-то принимает, возвращает boolean)
     private static boolean sameLastName(Person p, String lastName) {
         return p.getLastName().equals(lastName);
     }
@@ -91,5 +91,6 @@ public class ArrowNotation {
         Predicate<String> checkFirstName = propertyChecker(person, getFirstName);
 
         assertTrue(checkFirstName.test("a"));
+        assertTrue(propertyChecker(new Person("a", "b", 25), Person::getFirstName).test("a"));
     }
 }
