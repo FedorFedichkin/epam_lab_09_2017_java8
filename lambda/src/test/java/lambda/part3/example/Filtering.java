@@ -1,4 +1,4 @@
-package part3.example;
+package lambda.part3.example;
 
 import data.Employee;
 import data.JobHistoryEntry;
@@ -186,7 +186,6 @@ public class Filtering {
                 .force()
                 .size() > 0;
     }
-
 
     @Test
     public void lazy_filtering() {

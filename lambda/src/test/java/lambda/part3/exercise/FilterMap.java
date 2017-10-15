@@ -1,17 +1,36 @@
-package part3.exercise;
+package lambda.part3.exercise;
 
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static junit.framework.TestCase.assertEquals;
 
 public class FilterMap {
+
+    @Test
+    public void test() {
+        List<Integer> integers = Arrays.asList(1, 2, 100, 110, 200, 300, 400);
+
+        LazyCollectionHelper<Integer> lazy = new LazyCollectionHelper<>(integers);
+        LazyCollectionHelper<Integer> lazy2 = lazy.filter(val -> val != 0);
+        LazyCollectionHelper<Integer> lazy3 = lazy2.filter(val -> val < 0);
+        LazyCollectionHelper<Double> lazy4 = lazy3.map(Double::valueOf);
+
+        List<Double> lazyResult = lazy4.force();
+
+        List<String> result = new LazyCollectionHelper<>(integers).filter(val -> val > 10)
+                .filter(val -> val < 400)
+                .map(Object::toString)
+                .filter(str -> str.startsWith("1"))
+                .force();
+
+        assertEquals(Arrays.asList("100", "110"), result);
+    }
 
     public static class Container<T, R> {
         private final Predicate<T> predicate;
@@ -59,7 +78,7 @@ public class FilterMap {
             // TODO // done
             List<Container<Object, Object>> newActions = new ArrayList<>(this.actions);
             newActions.add(new Container<>((Function<Object, Object>) function));
-            return new LazyCollectionHelper<>((List<R>)list, actions);
+            return new LazyCollectionHelper<>((List<R>) list, actions);
         }
 
         public List<T> force() {
@@ -69,7 +88,8 @@ public class FilterMap {
             }
 
             List<T> result = new ArrayList<>();
-            nextValue: for (Object value : list) {
+            nextValue:
+            for (Object value : list) {
                 for (Container<Object, Object> action : actions) {
                     Predicate<Object> predicate = action.getPredicate();
                     if (predicate != null) {
@@ -85,26 +105,5 @@ public class FilterMap {
             }
             return result;
         }
-    }
-    @Test
-    public void test() {
-        List<Integer> integers = Arrays.asList(1, 2, 100, 110, 200, 300, 400);
-
-
-        LazyCollectionHelper<Integer> lazy = new LazyCollectionHelper<>(integers);
-        LazyCollectionHelper<Integer> lazy2 = lazy.filter(val -> val != 0);
-        LazyCollectionHelper<Integer> lazy3 = lazy2.filter(val -> val < 0);
-        LazyCollectionHelper<Double> lazy4 = lazy3.map(Double::valueOf);
-
-        List<Double> lazyResult = lazy4.force();
-
-
-        List<String> result = new LazyCollectionHelper<>(integers).filter(val -> val > 10)
-                .filter(val -> val < 400)
-                .map(Object::toString)
-                .filter(str -> str.startsWith("1"))
-                .force();
-
-        assertEquals(Arrays.asList("100", "110"), result);
     }
 }
