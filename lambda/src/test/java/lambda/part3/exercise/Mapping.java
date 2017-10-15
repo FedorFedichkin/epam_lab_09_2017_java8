@@ -30,137 +30,154 @@ public class Mapping {
 
         // ([T], T -> R) -> [R]
         public <R> MapHelper<R> map(Function<T, R> f) {
-            // TODO
-            throw new UnsupportedOperationException();
+            List<R> result = new ArrayList<>(this.list.size());
+            list.forEach(t -> result.add(f.apply(t)));
+            return new MapHelper<>(result);
         }
 
         // ([T], T -> [R]) -> [R]
         public <R> MapHelper<R> flatMap(Function<T, List<R>> f) {
-            // TODO
-            throw new UnsupportedOperationException();
+            List<R> result = new ArrayList<>(this.list.size());
+            this.list.forEach(t -> result.addAll(f.apply(t)));
+            return new MapHelper<>(result);
         }
     }
 
-    @Test
-    public void mapping() {
-        List<Employee> employees = Arrays.asList(
-            new Employee(new Person("a", "Galt", 30),
-                Arrays.asList(
-                        new JobHistoryEntry(2, "dev", "epam"),
-                        new JobHistoryEntry(1, "dev", "google")
-                )),
-            new Employee(new Person("b", "Doe", 40),
-                Arrays.asList(
-                        new JobHistoryEntry(3, "qa", "yandex"),
-                        new JobHistoryEntry(1, "qa", "epam"),
-                        new JobHistoryEntry(1, "dev", "abc")
-                )),
-            new Employee(new Person("c", "White", 50),
-                Collections.singletonList(
-                        new JobHistoryEntry(5, "qa", "epam")
-                ))
-        );
+        @Test
+        public void mapping() {
+            List<Employee> employees = Arrays.asList(
+                    new Employee(new Person("a", "Galt", 30),
+                            Arrays.asList(
+                                    new JobHistoryEntry(2, "dev", "epam"),
+                                    new JobHistoryEntry(1, "dev", "google")
+                            )),
+                    new Employee(new Person("b", "Doe", 40),
+                            Arrays.asList(
+                                    new JobHistoryEntry(3, "qa", "yandex"),
+                                    new JobHistoryEntry(1, "qa", "epam"),
+                                    new JobHistoryEntry(1, "dev", "abc")
+                            )),
+                    new Employee(new Person("c", "White", 50),
+                            Collections.singletonList(
+                                    new JobHistoryEntry(5, "qa", "epam")
+                            ))
+            );
 
-        List<Employee> mappedEmployees = new MapHelper<>(employees)
+            List<Employee> mappedEmployees = new MapHelper<>(employees)
                 /*
                 .map(TODO) // Изменить имя всех сотрудников на John .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
                 .map(TODO) // Добавить всем сотрудникам 1 год опыта .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
                 .map(TODO) // Заменить все qa на QA
                 * */
-                .getList();
+                    .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
+                    .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
+                    .map(e -> e.withJobHistory(qaToUpperCase(e.getJobHistory())))
+                    .getList();
 
-        List<Employee> expectedResult = Arrays.asList(
-            new Employee(new Person("John", "Galt", 30),
-                Arrays.asList(
-                        new JobHistoryEntry(3, "dev", "epam"),
-                        new JobHistoryEntry(2, "dev", "google")
-                )),
-            new Employee(new Person("John", "Doe", 40),
-                Arrays.asList(
-                        new JobHistoryEntry(4, "QA", "yandex"),
-                        new JobHistoryEntry(2, "QA", "epam"),
-                        new JobHistoryEntry(2, "dev", "abc")
-                )),
-            new Employee(new Person("John", "White", 50),
-                Collections.singletonList(
-                        new JobHistoryEntry(6, "QA", "epam")
-                ))
-        );
+            List<Employee> expectedResult = Arrays.asList(
+                    new Employee(new Person("John", "Galt", 30),
+                            Arrays.asList(
+                                    new JobHistoryEntry(3, "dev", "epam"),
+                                    new JobHistoryEntry(2, "dev", "google")
+                            )),
+                    new Employee(new Person("John", "Doe", 40),
+                            Arrays.asList(
+                                    new JobHistoryEntry(4, "QA", "yandex"),
+                                    new JobHistoryEntry(2, "QA", "epam"),
+                                    new JobHistoryEntry(2, "dev", "abc")
+                            )),
+                    new Employee(new Person("John", "White", 50),
+                            Collections.singletonList(
+                                    new JobHistoryEntry(6, "QA", "epam")
+                            ))
+            );
 
-        assertEquals(mappedEmployees, expectedResult);
+            assertEquals(mappedEmployees, expectedResult);
+        }
+
+        private List<JobHistoryEntry> qaToUpperCase(List<JobHistoryEntry> jh) {
+            return new MapHelper<>(jh).map(e -> e.getPosition().equals("qa") ? e.withPosition("QA") : e).getList();
+        }
+
+        private List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jh) {
+            return new MapHelper<>(jh).map(e -> e.withDuration(e.getDuration() + 1)).getList();
+        }
+
+
+        @Test
+        public void lazyMapping() {
+            List<Employee> employees = Arrays.asList(
+                    new Employee(
+                            new Person("a", "Galt", 30),
+                            Arrays.asList(
+                                    new JobHistoryEntry(2, "dev", "epam"),
+                                    new JobHistoryEntry(1, "dev", "google")
+                            )),
+                    new Employee(
+                            new Person("b", "Doe", 40),
+                            Arrays.asList(
+                                    new JobHistoryEntry(3, "qa", "yandex"),
+                                    new JobHistoryEntry(1, "qa", "epam"),
+                                    new JobHistoryEntry(1, "dev", "abc")
+                            )),
+                    new Employee(
+                            new Person("c", "White", 50),
+                            Collections.singletonList(
+                                    new JobHistoryEntry(5, "qa", "epam")
+                            ))
+            );
+
+            List<Employee> mappedEmployees = LazyMapHelper.from(employees)
+                    .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
+                    .map(e -> e.withJobHistory((addOneYear(e.getJobHistory()))))  // Добавить всем сотрудникам 1 год опыта .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
+                    .map(e -> e.withJobHistory(qaToUpperCase(e.getJobHistory()))) // Заменить все qu на QA
+                    .force();
+
+            List<Employee> expectedResult = Arrays.asList(
+                    new Employee(new Person("John", "Galt", 30),
+                            Arrays.asList(
+                                    new JobHistoryEntry(3, "dev", "epam"),
+                                    new JobHistoryEntry(2, "dev", "google")
+                            )),
+                    new Employee(new Person("John", "Doe", 40),
+                            Arrays.asList(
+                                    new JobHistoryEntry(4, "QA", "yandex"),
+                                    new JobHistoryEntry(2, "QA", "epam"),
+                                    new JobHistoryEntry(2, "dev", "abc")
+                            )),
+                    new Employee(new Person("John", "White", 50),
+                            Collections.singletonList(
+                                    new JobHistoryEntry(6, "QA", "epam")
+                            ))
+            );
+
+            assertEquals(mappedEmployees, expectedResult);
+        }
+
+        // TODO * LazyFlatMapHelper
+
+        private static class LazyMapHelper<T, R> {
+
+            private final List<T> list;
+            private final Function<T, R> function;
+
+            public LazyMapHelper(List<T> list, Function<T, R> function) {
+                this.list = list;
+                this.function = function;
+            }
+
+            public static <T> LazyMapHelper<T, T> from(List<T> list) {
+                return new LazyMapHelper<>(list, Function.identity());
+            }
+
+            public List<R> force() {
+                List<R> result = new ArrayList<>(list.size());
+                list.forEach(t -> result.add(function.apply(t)));
+                return result;
+            }
+
+            public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
+                return new LazyMapHelper<>(list, function.andThen(f));
+            }
+        }
     }
-
-    private static class LazyMapHelper<T, R> {
-
-        public LazyMapHelper(List<T> list, Function<T, R> function) {
-        }
-
-        public static <T> LazyMapHelper<T, T> from(List<T> list) {
-            return new LazyMapHelper<>(list, Function.identity());
-        }
-
-        public List<R> force() {
-            // TODO
-            throw new UnsupportedOperationException();
-        }
-
-        public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
-            // TODO
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    // TODO * LazyFlatMapHelper
-
-    @Test
-    public void lazyMapping() {
-        List<Employee> employees = Arrays.asList(
-            new Employee(
-                new Person("a", "Galt", 30),
-                Arrays.asList(
-                        new JobHistoryEntry(2, "dev", "epam"),
-                        new JobHistoryEntry(1, "dev", "google")
-                )),
-            new Employee(
-                new Person("b", "Doe", 40),
-                Arrays.asList(
-                        new JobHistoryEntry(3, "qa", "yandex"),
-                        new JobHistoryEntry(1, "qa", "epam"),
-                        new JobHistoryEntry(1, "dev", "abc")
-                )),
-            new Employee(
-                new Person("c", "White", 50),
-                Collections.singletonList(
-                        new JobHistoryEntry(5, "qa", "epam")
-                ))
-        );
-
-        List<Employee> mappedEmployees = LazyMapHelper.from(employees)
-                /*
-                .map(TODO) // Изменить имя всех сотрудников на John .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
-                .map(TODO) // Добавить всем сотрудникам 1 год опыта .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
-                .map(TODO) // Заменить все qu на QA
-                */
-                .force();
-
-        List<Employee> expectedResult = Arrays.asList(
-            new Employee(new Person("John", "Galt", 30),
-                Arrays.asList(
-                        new JobHistoryEntry(3, "dev", "epam"),
-                        new JobHistoryEntry(2, "dev", "google")
-                )),
-            new Employee(new Person("John", "Doe", 40),
-                Arrays.asList(
-                        new JobHistoryEntry(4, "QA", "yandex"),
-                        new JobHistoryEntry(2, "QA", "epam"),
-                        new JobHistoryEntry(2, "dev", "abc")
-                )),
-            new Employee(new Person("John", "White", 50),
-                Collections.singletonList(
-                        new JobHistoryEntry(6, "QA", "epam")
-                ))
-        );
-
-        assertEquals(mappedEmployees, expectedResult);
-    }
-}
