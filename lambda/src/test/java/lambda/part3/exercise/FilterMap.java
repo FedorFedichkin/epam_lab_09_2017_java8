@@ -58,7 +58,7 @@ public class FilterMap {
         public <R> LazyCollectionHelper<R> map(Function<? super T, ? extends R> function) {
             List<Container<Object, Object>> actions = new ArrayList<>(this.actions);
             actions.add(new Container<>((Function<Object, Object>) function));
-            return new LazyCollectionHelper<>((List<R>)list, actions);
+            return new LazyCollectionHelper<>((List<R>) list, actions);
         }
 
         public List<T> force() {
@@ -67,7 +67,8 @@ public class FilterMap {
             }
 
             List<T> result = new ArrayList<>();
-            nextValue: for (Object value : list) {
+            nextValue:
+            for (Object value : list) {
                 for (Container<Object, Object> action : actions) {
                     Predicate<Object> predicate = action.getPredicate();
                     if (predicate != null) {
@@ -100,10 +101,10 @@ public class FilterMap {
 
 
         List<String> result = new LazyCollectionHelper<>(integers).filter(val -> val > 10)
-                                                                  .filter(val -> val < 400)
-                                                                  .map(Object::toString)
-                                                                  .filter(str -> str.startsWith("1"))
-                                                                  .force();
+                .filter(val -> val < 400)
+                .map(Object::toString)
+                .filter(str -> str.startsWith("1"))
+                .force();
 
         assertEquals(Arrays.asList("100", "110"), result);
     }
