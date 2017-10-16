@@ -15,7 +15,6 @@ public class Lambdas04 {
         Person person = new Person("John", "Galt", 33);
 
         runFromCurrentThread(new Runnable() {
-
             @Override
             public void run() {
                 person.print();
@@ -30,11 +29,12 @@ public class Lambdas04 {
 
         // statement lambda
         runFromCurrentThread(() -> {
-            System.out.println("Before print");
             person.print();
         });
+
         // expression lambda
         runFromCurrentThread(() -> person.print());
+
         // method reference
         runFromCurrentThread(person::print);
     }
@@ -61,6 +61,8 @@ public class Lambdas04 {
     public void closure_this_lambda() {
         _person = new Person("John", "Galt", 33);
 
+        runFromCurrentThread(() -> /*this.*/_person.print());
+        runFromCurrentThread(/*this.*/_person::print);
         runFromCurrentThread(new Runnable() {
 
             private final Lambdas04 nestedReference = Lambdas04.this;
@@ -94,7 +96,7 @@ public class Lambdas04 {
 
     private Runnable runLaterFromCurrentThread(Runnable runnable) {
         return () -> {
-            System.out.println("before run");
+            System.out.println("before runFromCurrentThread");
             runnable.run();
         };
     }

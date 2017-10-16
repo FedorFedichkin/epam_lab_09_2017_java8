@@ -125,5 +125,4 @@ public class StreamsExercise1 {
 
         assertEquals(11, result);
     }
-
 }
