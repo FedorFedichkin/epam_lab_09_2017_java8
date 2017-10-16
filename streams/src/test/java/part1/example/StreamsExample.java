@@ -15,6 +15,13 @@ import static org.junit.Assert.assertEquals;
 
 public class StreamsExample {
 
+    private static Stream<PersonPositionPair> employeeToPairs(Employee employee) {
+        return employee.getJobHistory()
+                .stream()
+                .map(JobHistoryEntry::getPosition)
+                .map(p -> new PersonPositionPair(employee.getPerson(), p));
+    }
+
     @Test
     public void checkJohnsLastNames() {
         List<String> johnsLastNames = getEmployees().stream()
