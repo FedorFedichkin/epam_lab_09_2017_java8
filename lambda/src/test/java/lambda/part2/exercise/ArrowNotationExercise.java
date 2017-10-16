@@ -42,25 +42,15 @@ public class ArrowNotationExercise {
     // TODO
     // ageOfPersonWithTheLongestFullName: (Person -> String) -> ((Person, Person) -> int)
     //
-    private static int ageOfPersonWithTheLongestFullName(Person p1, Person p2) {
-        String firstPersonsFullName = getFullName(p1);
-        String secondPersonsFullName = getFullName(p2);
-        if (firstPersonsFullName.length() >= secondPersonsFullName.length()) {
-            return p1.getAge();
-        } else {
-            return p2.getAge();
-        }
-    }
 
     @Test
     public void getAgeOfPersonWithTheLongestFullName() {
         // Person -> String
-        final Function<Person, String> getFullName = ArrowNotationExercise::getFullName; // TODO
+        final Function<Person, String> getFullName = ArrowNotationExercise::getFullName;
 
-        // (Person, Person) -> Integer
-        // TODO use ageOfPersonWithTheLongestFullName(getFullName)
+
         final BiFunction<Person, Person, Integer> ageOfPersonWithTheLongestFullName =
-                ArrowNotationExercise::ageOfPersonWithTheLongestFullName;
+             (p1, p2) -> (getFullName.apply(p1)).length() > (getFullName.apply(p2)).length() ? p1.getAge() : p2.getAge();
 
         assertEquals(
                 Integer.valueOf(1),

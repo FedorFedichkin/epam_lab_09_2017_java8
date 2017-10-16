@@ -31,10 +31,8 @@ public class Lambdas03Exercise {
     @Test
     public void generic1() {
         final GenericProduct<Integer> prod = (Integer i1, int i2) -> {
-            System.out.print("before product");
             return i1 * i2;
         }; // Use statement lambda
-
         assertEquals(Integer.valueOf(6), prod.prod(3, 2));
     }
 

@@ -130,7 +130,7 @@ public class Mapping {
         }
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
-            return new LazyMapHelper<>(this.list, function.andThen(f));
+            return new LazyMapHelper<>(list, function.andThen(f));
         }
     }
 
