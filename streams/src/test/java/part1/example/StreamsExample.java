@@ -5,6 +5,9 @@ import data.JobHistoryEntry;
 import data.Person;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,18 +27,24 @@ public class StreamsExample {
 
     @Test
     public void checkJohnsLastNames() {
-        List<String> johnsLastNames = getEmployees().stream()
-                                                    .map(Employee::getPerson)
-                                                    .filter(e -> e.getFirstName().equals("John"))
-                                                    .map(Person::getLastName)
-                                                    .distinct()
-                                                    .collect(toList());
+        String[] johnsLastNames = getEmployees().stream()
+                .map(Employee::getPerson)
+                .filter(e -> e.getFirstName().equals("John"))
+                .map(Person::getLastName)
+                .distinct()
+                .toArray(String[]::new);
+//                                                    .collect(Collectors.toList());
 
         assertEquals(Collections.singletonList("Galt"), johnsLastNames);
     }
 
     @Test
     public void operations() {
+        try (Stream<Employee> stream = getEmployees().parallelStream()) {
+            Iterator<Employee> iterator = stream.iterator();
+        }
+
+
         Optional<JobHistoryEntry> jobHistoryEntry =
                 getEmployees().stream()
                               .filter(e -> e.getPerson().getFirstName().equals("John"))
@@ -53,7 +62,7 @@ public class StreamsExample {
         //      .allMatch(Predicate<T>)
         //      .anyMatch(Predicate<T>)
         //      .noneMatch(Predicate<T>)
-        //      .reduce(BinaryOperator<T>) // ассоциативная операция
+        //      .reduce(BinaryOperator<T>) // коммутативность операция
         //      .collect(Collector<T, A, R>)
         //      .count()
         //      .findAny()
@@ -85,13 +94,15 @@ public class StreamsExample {
 
         // Every aged (>= 25) John has an odd "dev" job experience
 
+        Comparator<JobHistoryEntry> durationComparator = Comparator.comparingInt(JobHistoryEntry::getDuration);
         employees.stream()
                  .filter(e -> e.getPerson().getFirstName().equals("John"))
                  .filter(e -> e.getPerson().getAge() >= 25)
                  .flatMap(e -> e.getJobHistory().stream())
                  .filter(e -> e.getPosition().equals("dev"))
+                 .filter(e -> e.getDuration() % 2 != 0)
                  .distinct()
-                 .sorted(comparing(JobHistoryEntry::getDuration))
+                 .sorted(durationComparator)
                  .forEachOrdered(System.out::println);
     }
 
@@ -99,14 +110,17 @@ public class StreamsExample {
     public void getProfessionals() {
         Map<String, Set<Person>> positionIndex = getPositionIndex(getEmployees());
 
+        System.out.println("Developers: ");
         for (Person person : positionIndex.get("dev")) {
             System.out.println(person);
         }
 
+        System.out.println("QA: ");
         for (Person person : positionIndex.get("QA")) {
             System.out.println(person);
         }
 
+        System.out.println("BA: ");
         positionIndex.get("BA").forEach(System.out::println);
     }
 
@@ -114,22 +128,31 @@ public class StreamsExample {
         return employee.getJobHistory()
                        .stream()
                        .map(JobHistoryEntry::getPosition)
-                       .map(p -> new PersonPositionPair(employee.getPerson(), p));
+                       .map(position -> new PersonPositionPair(employee.getPerson(), position));
     }
 
     // [ (John, [dev, QA]), (Bob, [QA, QA])] -> [dev -> [John], QA -> [John, Bob]]
-    // [ (John, dev), (John, QA), (Bob, QA), (Bob, QA)]
-    private Map<String, Set<Person>> getPositionIndex(List<Employee> employees) {
-        Stream<PersonPositionPair> personPositionPairStream = employees.stream().flatMap(StreamsExample::employeeToPairs);
+    // [ (John, dev), (John, QA), (Bob, QA), (Bob, QA)] -> [dev -> [John], QA -> [John, Bob]]
 
-        //personPositionPairStream
-        //        .reduce(Collections.EMPTY_MAP, StreamsExample::addToMap, StreamsExample::combineMaps);
+
+    // dev -> (John, dev)
+    // QA -> (Jogn, QA), (Bob, QA)
+
+
+    // dev -> (John)
+    // QA -> (Jogn, Bob)
+    private Map<String, Set<Person>> getPositionIndex(List<Employee> employees) {
+        Stream<PersonPositionPair> personPositionPairStream = employees.stream()
+                                                                       .flatMap(StreamsExample::employeeToPairs);
+
+        // Reduce with seed
+//        return personPositionPairStream.reduce(Collections.emptyMap(), StreamsExample::addToMap, StreamsExample::combineMaps);
 
 //        return personPositionPairStream
 //                .collect(
-//                        () -> new HashMap<>(),
+//                        HashMap::new,
 //                        (m, p) -> {
-//                            final Set<Person> set = m.computeIfAbsent(p.getPosition(), (k) -> new HashSet<>());
+//                            Set<Person> set = m.computeIfAbsent(p.getPosition(), (k) -> new HashSet<>());
 //                            set.add(p.getPerson());
 //                        },
 //                        (m1, m2) -> {
@@ -138,36 +161,51 @@ public class StreamsExample {
 //                                set.addAll(entry.getValue());
 //                            }
 //                        });
-        return personPositionPairStream.collect(
-                Collectors.groupingBy(PersonPositionPair::getPosition, mapping(PersonPositionPair::getPerson, toSet())));
-
+        return personPositionPairStream.collect(groupingBy(PersonPositionPair::getPosition, mapping(PersonPositionPair::getPerson, toSet())));
     }
 
-/*    private static Map<String, Set<Person>> combineMaps(Map<String, Set<Person>> u1,
-                                                        Map<String, Set<Person>> u2) {
-        final HashMap<String, Set<Person>> result = new HashMap<>();
-        result.putAll(u1);
+    private static Map<String, Set<Person>> combineMaps(Map<String, Set<Person>> u1, Map<String, Set<Person>> u2) {
+        HashMap<String, Set<Person>> result = new HashMap<>(u1);
         for (Map.Entry<String, Set<Person>> entry : u2.entrySet()) {
-            Set<Person> set = result.computeIfAbsent(entry.getKey(), (k) -> new HashSet<>());
-            set.addAll(entry.getValue());
+            result.merge(entry.getKey(), entry.getValue(), (people, people2) -> {
+                people.addAll(people2);
+                return people;
+            });
         }
         return result;
     }
 
-    private static Map<String, Set<Person>> addToMap(
-            Map<String, Set<Person>> u,
-            PersonPositionPair personPositionPair) {
-        final HashMap<String, Set<Person>> result = new HashMap<>();
-        result.putAll(u);
-        Set<Person> set = result.computeIfAbsent(personPositionPair.getPosition(), (k) -> new HashSet<>());
-        set.add(personPositionPair.getPerson());
+    private static Map<String, Set<Person>> addToMap(Map<String, Set<Person>> origin, PersonPositionPair pair) {
+        HashMap<String, Set<Person>> result = new HashMap<>(origin);
+
+        Set<Person> set = result.computeIfAbsent(pair.getPosition(), (k) -> new HashSet<>());
+        set.add(pair.getPerson());
+
+
+//        Map<String, Integer> someMap = new HashMap<>();
+//        someMap.put("1", 1);
+//        someMap.put("2", 2);
+//        someMap.put("3", 3);
+//        someMap.put("4", 4);
+//
+//
+//        someMap.put("2", 10);
+//        someMap.merge("2", 10, Integer::sum);
+
+
+        result.merge(pair.getPosition(), Collections.singleton(pair.getPerson()), (oldValue, newValue) -> {
+            oldValue.add(pair.getPerson());
+            return oldValue;
+        });
+
+
         return result;
-    }*/
+    }
 
 
     @Test
     public void getTheCoolestOne() {
-        final Map<String, Person> coolestByPosition = getCoolestByPosition(getEmployees());
+        Map<String, Person> coolestByPosition = getCoolestByPosition(getEmployees());
 
         coolestByPosition.forEach((position, person) -> System.out.println(position + " -> " + person));
     }
@@ -197,7 +235,7 @@ public class StreamsExample {
     }
 
     private Map<String, Person> getCoolestByPosition(List<Employee> employees) {
-        final Stream<PersonPositionDuration> personPositionDurationStream = employees.stream()
+        Stream<PersonPositionDuration> personPositionDurationStream = employees.stream()
                 .flatMap(
                         e -> e.getJobHistory()
                                 .stream()
@@ -210,8 +248,7 @@ public class StreamsExample {
         return personPositionDurationStream
                 .collect(groupingBy(
                         PersonPositionDuration::getPosition,
-                        collectingAndThen(
-                                maxBy(comparing(PersonPositionDuration::getDuration)), p -> p.get().getPerson())));
+                        collectingAndThen(maxBy(comparing(PersonPositionDuration::getDuration)), p -> p.isPresent() ? p.get().getPerson() : null)));
     }
 
     @Test
