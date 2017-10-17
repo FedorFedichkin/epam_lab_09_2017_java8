@@ -7,14 +7,11 @@ import com.google.common.collect.ImmutableList;
 import data.Person;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class Lambdas01Exercise {
 
@@ -31,7 +28,7 @@ public class Lambdas01Exercise {
 
             @Override
             public int compare(Person o1, Person o2) {
-                return o1.getAge() - (o2.getAge());
+                return Integer.compare(o1.getAge(),o2.getAge());
             }
         });
 
@@ -57,14 +54,14 @@ public class Lambdas01Exercise {
                 FluentIterable.from(persons)
                         .firstMatch(new Predicate<Person>() {
                             public boolean apply(Person p) {
-                                return  30 == p.getAge();
+                                return 30 == p.getAge();
                             }
                         });
 
         if (personOptional.isPresent()) {
             personOptional.get().print();
             assertNotNull(personOptional.get());
-            assertEquals(new Person("name 1", "lastNames 2", 30),personOptional.get());
+            assertEquals(new Person("name 1", "lastNames 2", 30), personOptional.get());
         }
 
     }
