@@ -7,13 +7,11 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ArrowNotation {
 
-    // String -> int
+    // нотация стрелочка, String -> int
     private static int strLength(String s) {
         return s.length();
     }
@@ -42,7 +40,7 @@ public class ArrowNotation {
         assertEquals(5, lastNameLength.apply(new Person("a", "abcde", 0)).intValue());
     }
 
-    // (Person, String) -> boolean
+    // (Person, String) -> boolean - это предикат (что-то принимает, возвращает boolean)
     private static boolean sameLastName(Person p, String lastName) {
         return p.getLastName().equals(lastName);
     }

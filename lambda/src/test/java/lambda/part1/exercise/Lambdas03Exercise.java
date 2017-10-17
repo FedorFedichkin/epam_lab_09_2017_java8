@@ -18,23 +18,32 @@ public class Lambdas03Exercise {
 
     @Test
     public void generic0() {
-        final GenericProduct<Integer> prod = null; // Use anonymous class
-
-        assertEquals(prod.prod(3, 2), Integer.valueOf(6));
+        // Use anonymous class
+        final GenericProduct<Integer> prod = new GenericProduct<Integer>() {
+            @Override
+            public Integer prod(Integer a, int i) {
+                return a * i;
+            }
+        };
+        assertEquals(Integer.valueOf(6), prod.prod(3, 2));
     }
 
     @Test
     public void generic1() {
-        final GenericProduct<Integer> prod = null; // Use statement lambda
+        // Use statement lambda
+        final GenericProduct<Integer> prod = (Integer a, int i) -> {
+            System.out.println("before multiplication");
+            return a * i;
+        };
+        assertEquals(Integer.valueOf(6), prod.prod(3, 2));
 
-        assertEquals(prod.prod(3, 2), Integer.valueOf(6));
     }
 
     @Test
     public void generic2() {
-        final GenericProduct<Integer> prod = null; // Use expression lambda
-
-        assertEquals(prod.prod(3, 2), Integer.valueOf(6));
+        // Use expression lambda
+        final GenericProduct<Integer> prod = (Integer a, int i) -> a * i;
+        assertEquals(Integer.valueOf(6), prod.prod(3, 2));
     }
 
     private static String stringProd(String s, int i) {
@@ -47,9 +56,9 @@ public class Lambdas03Exercise {
 
     @Test
     public void strSum() {
-        final GenericProduct<String> prod = null; // use stringProd;
-
-        assertEquals(prod.prod("a", 2), "aa");
+        // use stringProd (method-reference);
+        final GenericProduct<String> prod = Lambdas03Exercise::stringProd;
+        assertEquals("aa", prod.prod("a", 2));
     }
 
     private final String delimeter = "-";
@@ -64,9 +73,10 @@ public class Lambdas03Exercise {
 
     @Test
     public void strSum2() {
-        final GenericProduct<String> prod = null; // use stringSumWithDelimeter;
+        // use stringSumWithDelimeter;
+        final GenericProduct<String> prod = this::stringSumWithDelimeter;
 
-        assertEquals(prod.prod("a", 3), "a-a-a");
+        assertEquals("a-a-a", prod.prod("a", 3));
     }
 
 

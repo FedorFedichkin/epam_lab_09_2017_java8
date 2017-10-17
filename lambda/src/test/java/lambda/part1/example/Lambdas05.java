@@ -14,16 +14,23 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Lambdas05 {
-
-    private <T> void printResult(T value, Function<T, String> function) {
-        System.out.println(function.apply(value));
+    private <T> void printResult(T t, Function<T, String> function) {
+        System.out.println(function.apply(t));
     }
 
     private final Person person = new Person("John", "Galt", 33);
 
     @Test
     public void printField() {
+        //объект person типа Person, который указан первым параметром, неявно становится первым аргументом тут:
+        //Function<T, String> function.
+        //Person::getLastName здесь выступает в роли Function<T, String> function, которая из неявно переданного
+        //объекта типа Person "достает" объект типа String при помощи метода getLastName
         printResult(person, Person::getLastName);
+
+//        BiFunction<Person, String, Person> changeFirstName = Person::withFirstName;
+
+//        printResult(changeFirstName.apply(person, "newName"), Person::getFirstName);
     }
 
 
@@ -66,7 +73,7 @@ public class Lambdas05 {
         throwableClassRef.run();
 
         Runnable r = () -> {
-//            Thread.sleep(100);
+            //Thread.sleep(100);
             person.print();
         };
 

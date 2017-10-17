@@ -57,6 +57,7 @@ public class Lambdas01 {
                 new Person("name 1", "lastName 3", 40)
         );
 
+        //Code
         Person person = null;
         for (Person p : persons) {
             if ("name 1".equals(p.getFirstName())) {
@@ -69,6 +70,7 @@ public class Lambdas01 {
             person.print();
         }
 
+        //Asserts
         assertNotNull(person);
         assertEquals(new Person("name 1", "lastName 2", 40), person);
     }
@@ -81,18 +83,21 @@ public class Lambdas01 {
                 new Person("name 2", "lastName 1", 30)
         );
 
+        //Optional is for only one object. It can also be empty.
         final Optional<Person> personOptional =
                 FluentIterable.from(persons)
-                              .firstMatch(new Predicate<Person>() {
+                        .firstMatch(new Predicate<Person>() {
 
-                                  @Override
-                                  public boolean apply(Person p) {
-                                        return "name 1".equals(p.getFirstName());
-                                    }
-                              });
+                            @Override
+                            public boolean apply(Person p) {
+                                return "name 1".equals(p.getFirstName());
+                            }
+                        });
 
         if (personOptional.isPresent()) {
             personOptional.get().print();
+
+            //Asserts
             assertNotNull(personOptional.get());
             assertEquals(new Person("name 1", "lastName 2", 40), personOptional.get());
         }

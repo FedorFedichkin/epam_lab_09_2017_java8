@@ -36,8 +36,8 @@ public class Lambdas03 {
 
     @Test
     public void generic1() {
-        // Statement lambda
-        GenericSum<Integer> sum =
+        //Lambda statement
+        final GenericSum<Integer> sum =
                 (i1, i2) -> {
                     System.out.print("before sum");
                     return i1 + i2;
@@ -51,7 +51,7 @@ public class Lambdas03 {
         GenericSum<Integer> sum = (i1, i2) -> i1 + i2;
 
         assertEquals(sum.twice(1), Integer.valueOf(2));
-        assertEquals(sum.sum(1, 2), Integer.valueOf(3));
+        assertEquals(sum.sum(1,2), Integer.valueOf(3));
     }
 
     private static String stringSum(String s1, String s2) {
@@ -78,6 +78,7 @@ public class Lambdas03 {
 
     private final String delimiter = "-";
 
+    //non-static method
     private String stringSumWithDelimiter(String s1, String s2) {
         return s1 + delimiter + s2;
     }

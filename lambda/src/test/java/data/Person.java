@@ -27,7 +27,9 @@ public class Person implements Comparable<Person>, Serializable {
         return firstName;
     }
 
-    public String getLastName() {
+
+    //Person this можно указать явно, а можно и ничего не указывать - Person this будет подставлен автоматически
+    public String getLastName(Person this) {
         return lastName;
     }
 
