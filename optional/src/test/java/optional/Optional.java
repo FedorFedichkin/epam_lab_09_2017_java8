@@ -22,7 +22,7 @@ public class Optional<T> {
     }
 
     public static <T> Optional<T> of(T value) {
-        return new Optional<>(value);
+        return new Optional<T>(value);
     }
 
     public static <T> Optional<T> empty() {
@@ -45,7 +45,7 @@ public class Optional<T> {
 
     public T get() {
         if (!isPresent()) {
-            throw new NoSuchElementException("Haven't value");
+            throw new NoSuchElementException("No value present");
         }
         return value;
     }
@@ -67,7 +67,7 @@ public class Optional<T> {
     }
 
     public Optional<T> filter(Predicate<? super T> predicate) {
-        if (isPresent()) {
+        if (!isPresent()) {
             return predicate.test(value) ? this : empty();
         } else {
             return empty();
@@ -83,10 +83,11 @@ public class Optional<T> {
     }
 
     public <R> Optional<R> flatMap(Function<? super T, Optional<R>> mapper) {
-        if (isPresent()) {
-            return mapper.apply(value);
-        } else {
+        Objects.requireNonNull(mapper);
+        if (!isPresent())
             return empty();
+        else {
+            return Objects.requireNonNull(mapper.apply(value));
         }
     }
 }
