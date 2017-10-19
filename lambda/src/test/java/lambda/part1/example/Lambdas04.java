@@ -21,6 +21,9 @@ public class Lambdas04 {
                 person.print();
             }
         });
+
+
+       // person = new Person("a", "a", 44);
     }
 
 

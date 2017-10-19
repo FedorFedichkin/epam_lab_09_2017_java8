@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -203,11 +202,11 @@ public class FunctionCombination {
     // int -> int -> int -> int
     public static Function<Integer, Function<Integer, Function<Integer, Integer>>> curry() {
         return x -> {
-          return y -> {
-            return z -> {
-                return sum(x, y, z);
+            return y -> {
+                return z -> {
+                    return sum(x, y, z);
+                };
             };
-          };
         };
     }
 

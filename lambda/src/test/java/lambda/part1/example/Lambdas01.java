@@ -10,7 +10,6 @@ import data.Person;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,13 +32,15 @@ public class Lambdas01 {
                 new Person("name 2", "lastName 1", 30)
         };
 
-        Arrays.sort(persons, new Comparator<Person>() {
+//        Arrays.sort(persons, new Comparator<Person>() {
+//
+//            @Override
+//            public int compare(Person o1, Person o2) {
+//                return o1.getLastName().compareTo(o2.getLastName());
+//            }
+//        });
 
-            @Override
-            public int compare(Person o1, Person o2) {
-                return o1.getLastName().compareTo(o2.getLastName());
-            }
-        });
+        Arrays.sort(persons, ( o1, o2) -> o1.getLastName().compareTo(o2.getLastName()) );
 
         assertArrayEquals(new Person[]{
                 new Person("name 2", "lastName 1", 30),
