@@ -11,43 +11,69 @@ import static org.junit.Assert.assertEquals;
 
 public class ArrowNotationExercise {
 
+    /**
+     * Simple method to get Person full name
+     *
+     * @param person Person for retrieving full name
+     * @return Full name of Person
+     */
+    public String getFullName(Person person) {
+        return person.getFirstName() + " " + person.getLastName();
+    }
+
     @Test
     public void getAge() {
         // Person -> Integer
-        final Function<Person, Integer> getAge = null; // TODO
+        // We can represent method call as a Function and store it in the variable
+        final Function<Person, Integer> getAge = Person::getAge;
 
         assertEquals(Integer.valueOf(33), getAge.apply(new Person("", "", 33)));
     }
 
     @Test
     public void compareAges() {
-        // TODO use BiPredicate
-        // compareAges: (Person, Person) -> boolean
+        // TASK: use BiPredicate
+        BiPredicate<Person, Person> compareAges = new BiPredicate<Person, Person>() {
+            @Override
+            public boolean test(Person person, Person person2) {
+                return person.getAge() == person2.getAge();
+            }
+        };
 
-        throw new UnsupportedOperationException("Not implemented");
-        //assertEquals(true, compareAges.test(new Person("a", "b", 22), new Person("c", "d", 22)));
+        assertEquals(true, compareAges.test(new Person("a", "b", 22), new Person("c", "d", 22)));
     }
-
-    // TODO
-    // getFullName: Person -> String
-
-    // TODO
-    // ageOfPersonWithTheLongestFullName: (Person -> String) -> ((Person, Person) -> int)
-    //
 
     @Test
     public void getAgeOfPersonWithTheLongestFullName() {
         // Person -> String
-        final Function<Person, String> getFullName = null; // TODO
+        // Save link to method body
+        final Function<Person, String> getFullName = this::getFullName;
 
         // (Person, Person) -> Integer
-        // TODO use ageOfPersonWithTheLongestFullName(getFullName)
-        final BiFunction<Person, Person, Integer> ageOfPersonWithTheLongestFullName = null;
+        // TASK: use ageOfPersonWithTheLongestFullName(getFullName)
+        final BiFunction<Person, Person, Integer> ageOfPersonWithTheLongestFullName = ageOfPersonWithTheLongestFullName(getFullName);
 
         assertEquals(
                 Integer.valueOf(1),
                 ageOfPersonWithTheLongestFullName.apply(
                         new Person("a", "b", 2),
                         new Person("aa", "b", 1)));
+    }
+
+    /**
+     * Get BiFunction for getting age of person with the longest full name
+     *
+     * @param getFullName Function for getting full name of person
+     * @return Constructed BiFunction
+     */
+    private BiFunction<Person, Person, Integer> ageOfPersonWithTheLongestFullName(Function<Person, String> getFullName) {
+        // Return constructed BiFunction with two parameters which apply input function for parameters
+        return (p1, p2) -> {
+            if ((getFullName.apply(p1).length() > getFullName.apply(p2).length())) {
+                return p1.getAge();
+            } else {
+                return p2.getAge();
+            }
+        };
     }
 }
