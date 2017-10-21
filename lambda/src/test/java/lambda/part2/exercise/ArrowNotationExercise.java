@@ -24,7 +24,7 @@ public class ArrowNotationExercise {
         assertEquals(Integer.valueOf(33), getAge.apply(new Person("", "", 33)));
     }
 
-    // TODO use BiPredicate
+
     // compareAges: (Person, Person) -> boolean
     @Test
     public void compareAgesTest() {

@@ -53,7 +53,7 @@ public class FunctionCombinationExercise {
     // TODO // done
     // negate: (T -> boolean) -> (T -> boolean)
     private <T> Predicate<T> negate(Predicate<T> predicate) {
-        return t -> !predicate.test(t);
+       return t -> !predicate.test(t);
 //        throw new UnsupportedOperationException();
     }
 
@@ -69,10 +69,10 @@ public class FunctionCombinationExercise {
         Predicate<Person> hasEmptyFirstName = p -> p.getFirstName().isEmpty();
         Predicate<Person> hasEmptyLastName = p -> p.getLastName().isEmpty();
 
-        Predicate<Person> validateFirstName = hasEmptyFirstName.negate(); // TODO use negate // done
-        Predicate<Person> validateLastName = hasEmptyLastName.negate(); // TODO use negate // done
+        Predicate<Person> validateFirstName = negate(hasEmptyFirstName); // TODO use negate // done
+        Predicate<Person> validateLastName = negate(hasEmptyLastName); // TODO use negate // done
 
-        Predicate<Person> validate = validateFirstName.and(validateLastName); // TODO use and // done
+        Predicate<Person> validate = and(validateFirstName, validateLastName); // TODO use and // done
 
         assertTrue(validate.test(new Person("a", "b", 0)));
         assertFalse(validate.test(new Person("", "b", 0)));
@@ -84,10 +84,10 @@ public class FunctionCombinationExercise {
         Predicate<Person> hasEmptyFirstName = p -> p.getFirstName().isEmpty();
         Predicate<Person> hasEmptyLastName = p -> p.getLastName().isEmpty();
 
-        Predicate<Person> validateFirstName = p -> hasEmptyFirstName.negate().test(p); // TODO use Predicate->negate // done
-        Predicate<Person> validateLastName = p -> hasEmptyLastName.negate().test(p); // TODO use Predicate->negate // done
+        Predicate<Person> validateFirstName = p -> hasEmptyFirstName.negate().test(p); // TODO use Predicate->negate
+        Predicate<Person> validateLastName = p -> hasEmptyLastName.negate().test(p); // TODO use Predicate->negate
 
-        Predicate<Person> validate = p -> validateFirstName.and(validateLastName).test(p); // TODO use Predicate->and // done
+        Predicate<Person> validate = p -> validateFirstName.and(validateLastName).test(p); // TODO use Predicate->and
 
         assertTrue(validate.test(new Person("a", "b", 0)));
         assertFalse(validate.test(new Person("", "b", 0)));

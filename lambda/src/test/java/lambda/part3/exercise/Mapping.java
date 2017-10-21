@@ -207,8 +207,8 @@ public class Mapping {
         // TODO // done
         public List<R> force() {
             List<R> resultList = new ArrayList<>();
-            for (T t : this.list) {
-                resultList.add(this.function.apply(t));
+            for (T t : list) {
+                resultList.add(function.apply(t));
             }
             return resultList;
 //            throw new UnsupportedOperationException();
@@ -216,8 +216,74 @@ public class Mapping {
 
         // TODO // done
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
-            return new LazyMapHelper<T, R2>(this.list, this.function.andThen(f));
+            return new LazyMapHelper<T, R2>(list, function.andThen(f));
 //            throw new UnsupportedOperationException();
         }
     }
+
+    private static class LazyFlatMapHelper<T, R> {
+        private final List<T> list;
+        private final Function<T, List<R>> mapper;
+
+        private LazyFlatMapHelper(List<T> list, Function<T, List<R>> mapper) {
+            this.mapper = mapper;
+            this.list = list;
+        }
+
+        public static <T> LazyFlatMapHelper<T, T> from(List<T> list) {
+            return new LazyFlatMapHelper<>(list, t -> Collections.singletonList(t));
+        }
+
+        public <U> LazyFlatMapHelper<T, U> flatMap(Function<R, List<U>> remapper) {
+            return new LazyFlatMapHelper<>(list, mapper.andThen(result -> result
+                    .stream()
+                    .flatMap(element -> remapper.apply(element).stream())
+                    .collect(Collectors.toList())));
+        }
+
+        public List<R> force() {
+            ArrayList<R> result = new ArrayList<>();
+            list.stream().map(mapper).forEach(result::addAll);
+            return result;
+        }
+    }
+
+    @Test
+    public void LazyFlatMapping() {
+        List<Employee> employees = getEmployees();
+        List<JobHistoryEntry> force = LazyFlatMapHelper.from(employees).flatMap(Employee::getJobHistory).force();
+
+        List<Character> force1 = LazyFlatMapHelper.from(employees)
+                .flatMap(Employee::getJobHistory)
+                .flatMap(entry -> entry.getPosition()
+                        .chars()
+                        .mapToObj(sym -> (char) sym)
+                        .collect(Collectors.toList()))
+                .force();
+
+    }
+
+    private List<Employee> getEmployees() {
+        return Arrays.asList(
+                new Employee(
+                        new Person("John", "Galt", 30),
+                        Arrays.asList(
+                                new JobHistoryEntry(3, "dev", "epam"),
+                                new JobHistoryEntry(2, "dev", "google")
+                        )),
+                new Employee(
+                        new Person("John", "Doe", 40),
+                        Arrays.asList(
+                                new JobHistoryEntry(4, "QA", "yandex"),
+                                new JobHistoryEntry(2, "QA", "epam"),
+                                new JobHistoryEntry(2, "dev", "abc")
+                        )),
+                new Employee(
+                        new Person("John", "White", 50),
+                        Collections.singletonList(
+                                new JobHistoryEntry(6, "QA", "epam")
+                        ))
+        );
+    }
+
 }
