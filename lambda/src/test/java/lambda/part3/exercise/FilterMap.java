@@ -56,6 +56,7 @@ public class FilterMap {
     }
 
     public static class LazyCollectionHelper<T> {
+
         private final List<Container<Object, Object>> actions;
         private final List<T> list;
 
@@ -71,25 +72,22 @@ public class FilterMap {
         public LazyCollectionHelper<T> filter(Predicate<? super T> condition) {
             List<Container<Object, Object>> actions = new ArrayList<>(this.actions);
             actions.add(new Container<>((Predicate<Object>) condition));
-            return new LazyCollectionHelper<>(list, actions);
+            return new LazyCollectionHelper<T>(list, actions);
         }
 
         public <R> LazyCollectionHelper<R> map(Function<? super T, ? extends R> function) {
-            // TODO // done
-            List<Container<Object, Object>> newActions = new ArrayList<>(this.actions);
-            newActions.add(new Container<>((Function<Object, Object>) function));
-            return new LazyCollectionHelper<>((List<R>) list, actions);
+            List<Container<Object, Object>> actions = new ArrayList<>(this.actions);
+            actions.add(new Container<>((Function<Object, Object>) function));
+            return new LazyCollectionHelper<>((List<R>)list, actions);
         }
 
         public List<T> force() {
-            // TODO // done
             if (actions.isEmpty()) {
                 return new ArrayList<>(list);
             }
 
             List<T> result = new ArrayList<>();
-            nextValue:
-            for (Object value : list) {
+            nextValue: for (Object value : list) {
                 for (Container<Object, Object> action : actions) {
                     Predicate<Object> predicate = action.getPredicate();
                     if (predicate != null) {
@@ -105,5 +103,27 @@ public class FilterMap {
             }
             return result;
         }
+    }
+
+    @Test
+    public void test() {
+        List<Integer> integers = Arrays.asList(1, 2, 100, 110, 200, 300, 500);
+
+
+//        LazyCollectionHelper<Integer> lazy = new LazyCollectionHelper<>(integers);
+//        LazyCollectionHelper<Integer> lazy2 = lazy.filter(val -> val != 0);
+//        LazyCollectionHelper<Integer> lazy3 = lazy2.filter(val -> val < 0);
+//        LazyCollectionHelper<Double> lazy4 = lazy3.map(Double::valueOf);
+//
+//        List<Double> lazyResult = lazy4.force();
+
+
+        List<String> result = new LazyCollectionHelper<>(integers).filter(val -> val > 10)
+                                                                  .filter(val -> val < 400)
+                                                                  .map(Object::toString)
+                                                                  .filter(str -> str.startsWith("1"))
+                                                                  .force();
+
+        assertEquals(Arrays.asList("100", "110"), result);
     }
 }
