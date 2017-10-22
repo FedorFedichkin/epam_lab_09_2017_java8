@@ -58,7 +58,20 @@ public class OptionalExample {
 
     @Test
     public void flatMap() {
-        throw new UnsupportedOperationException("Not implemented");
+        Optional<String> optional = getOptional();
+        Function<String, Optional<List<Character>>> function = string -> {
+            char[] charsFromString = string.toCharArray();
+            Optional<List<Character>> listOfCharacters = Optional.of(new ArrayList<>());
+            if (listOfCharacters.isPresent()) {
+                for (char character: charsFromString) {
+                    listOfCharacters.get().add(character);
+                }
+            }
+            return listOfCharacters;
+        };
+        Optional<List<Character>> expected = optional.flatMap(function);
+        Optional<List<Character>> actual = optional.isPresent() ? function.apply(optional.get()) : Optional.empty();
+        assertEquals(expected, actual);
     }
 
     @Test
