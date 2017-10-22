@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
-@SuppressWarnings({"WeakerAccess"})
+
 public class Mapping {
 
 //    private static List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
@@ -96,41 +96,6 @@ public class Mapping {
                 .getList();
     }
 
-    private static class MapHelper<T> {
-        private final List<T> list;
-
-        public MapHelper(List<T> list) {
-            this.list = list;
-        }
-
-        public List<T> getList() {
-            return list;
-        }
-
-        // [T] -> (T -> R) -> [R]
-        // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
-        public <R> MapHelper<R> map(Function<T, R> f) {
-            List<R> result = new ArrayList<>(list.size());
-            for (T value : list) {
-                result.add(f.apply(value));
-            }
-            return new MapHelper<R>(result);
-        }
-
-        // [T] -> (T -> [R]) -> [R]
-
-        // map: [T, T, T], T -> [R] => [[], [R1, R2], [R3, R4, R5]]
-        // flatMap: [T, T, T], T -> [R] => [R1, R2, R3, R4, R5]
-        public <R> MapHelper<R> flatMap(Function<T, List<R>> f) {
-            final List<R> result = new ArrayList<R>();
-            list.forEach((T t) ->
-                    f.apply(t).forEach(result::add)
-            );
-
-            return new MapHelper<R>(result);
-        }
-    }
-
     @Test
     public void lazyMapping() {
         final List<Employee> employees =
@@ -192,6 +157,79 @@ public class Mapping {
         assertEquals(mappedEmployees, expectedResult);
     }
 
+    @Test
+    public void LazyFlatMapping() {
+        List<Employee> employees = getEmployees();
+        List<JobHistoryEntry> force = LazyFlatMapHelper.from(employees).flatMap(Employee::getJobHistory).force();
+
+        List<Character> force1 = LazyFlatMapHelper.from(employees)
+                .flatMap(Employee::getJobHistory)
+                .flatMap(entry -> entry.getPosition()
+                        .chars()
+                        .mapToObj(sym -> (char) sym)
+                        .collect(Collectors.toList()))
+                .force();
+
+    }
+
+    private List<Employee> getEmployees() {
+        return Arrays.asList(
+                new Employee(
+                        new Person("John", "Galt", 30),
+                        Arrays.asList(
+                                new JobHistoryEntry(3, "dev", "epam"),
+                                new JobHistoryEntry(2, "dev", "google")
+                        )),
+                new Employee(
+                        new Person("John", "Doe", 40),
+                        Arrays.asList(
+                                new JobHistoryEntry(4, "QA", "yandex"),
+                                new JobHistoryEntry(2, "QA", "epam"),
+                                new JobHistoryEntry(2, "dev", "abc")
+                        )),
+                new Employee(
+                        new Person("John", "White", 50),
+                        Collections.singletonList(
+                                new JobHistoryEntry(6, "QA", "epam")
+                        ))
+        );
+    }
+
+    private static class MapHelper<T> {
+        private final List<T> list;
+
+        public MapHelper(List<T> list) {
+            this.list = list;
+        }
+
+        public List<T> getList() {
+            return list;
+        }
+
+        // [T] -> (T -> R) -> [R]
+        // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
+        public <R> MapHelper<R> map(Function<T, R> f) {
+            List<R> result = new ArrayList<>(list.size());
+            for (T value : list) {
+                result.add(f.apply(value));
+            }
+            return new MapHelper<R>(result);
+        }
+
+        // [T] -> (T -> [R]) -> [R]
+
+        // map: [T, T, T], T -> [R] => [[], [R1, R2], [R3, R4, R5]]
+        // flatMap: [T, T, T], T -> [R] => [R1, R2, R3, R4, R5]
+        public <R> MapHelper<R> flatMap(Function<T, List<R>> f) {
+            final List<R> result = new ArrayList<R>();
+            list.forEach((T t) ->
+                    f.apply(t).forEach(result::add)
+            );
+
+            return new MapHelper<R>(result);
+        }
+    }
+
     private static class LazyMapHelper<T, R> {
         private final Function<T, R> function;
         private final List<T> list;
@@ -248,43 +286,4 @@ public class Mapping {
             return result;
         }
     }
-
-    @Test
-    public void LazyFlatMapping() {
-        List<Employee> employees = getEmployees();
-        List<JobHistoryEntry> force = LazyFlatMapHelper.from(employees).flatMap(Employee::getJobHistory).force();
-
-        List<Character> force1 = LazyFlatMapHelper.from(employees)
-                .flatMap(Employee::getJobHistory)
-                .flatMap(entry -> entry.getPosition()
-                        .chars()
-                        .mapToObj(sym -> (char) sym)
-                        .collect(Collectors.toList()))
-                .force();
-
-    }
-
-    private List<Employee> getEmployees() {
-        return Arrays.asList(
-                new Employee(
-                        new Person("John", "Galt", 30),
-                        Arrays.asList(
-                                new JobHistoryEntry(3, "dev", "epam"),
-                                new JobHistoryEntry(2, "dev", "google")
-                        )),
-                new Employee(
-                        new Person("John", "Doe", 40),
-                        Arrays.asList(
-                                new JobHistoryEntry(4, "QA", "yandex"),
-                                new JobHistoryEntry(2, "QA", "epam"),
-                                new JobHistoryEntry(2, "dev", "abc")
-                        )),
-                new Employee(
-                        new Person("John", "White", 50),
-                        Collections.singletonList(
-                                new JobHistoryEntry(6, "QA", "epam")
-                        ))
-        );
-    }
-
 }

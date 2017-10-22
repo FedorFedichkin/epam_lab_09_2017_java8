@@ -106,7 +106,7 @@ public class FilterMap {
     }
 
     @Test
-    public void test() {
+    public void test2() {
         List<Integer> integers = Arrays.asList(1, 2, 100, 110, 200, 300, 500);
 
 

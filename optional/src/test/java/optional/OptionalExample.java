@@ -2,9 +2,14 @@ package optional;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
+import java.util.zip.CheckedInputStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -58,7 +63,16 @@ public class OptionalExample {
 
     @Test
     public void filter() {
-        throw new UnsupportedOperationException("Not implemented");
+        Optional<String> optional = getOptional();
+        Predicate<String> predicate = string -> string.equals("abc");
+        Optional<String> expected = optional.filter(predicate);
+        Optional<String> actual;
+        if (optional.isPresent()) {
+            actual = predicate.test(optional.get()) ? optional : Optional.empty();
+        } else {
+            actual = Optional.empty();
+        }
+        assertEquals(expected, actual);
     }
 
     private Optional<String> getOptional() {
