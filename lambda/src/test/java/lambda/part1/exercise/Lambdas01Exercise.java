@@ -1,11 +1,12 @@
 package lambda.part1.exercise;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import data.Person;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -21,6 +22,7 @@ public class Lambdas01Exercise {
                 new Person("name 2", "lastName 1", 30)
         };
 
+        Arrays.sort(persons, (p1, p2) -> Integer.compare(p1.getAge(),p2.getAge()));
         // TODO use Arrays.sort
 
         assertArrayEquals(persons, new Person[]{
@@ -40,8 +42,9 @@ public class Lambdas01Exercise {
 
         Person person = null;
 
+        final Optional<Person> personOptional = FluentIterable.from(persons).firstMatch(p -> p.getAge() == 30);
         // TODO use FluentIterable
 
-        assertEquals(person, new Person("name 1", "lastName 2", 30));
+        assertEquals(new Person("name 1", "lastName 2", 30),personOptional.get());
     }
 }

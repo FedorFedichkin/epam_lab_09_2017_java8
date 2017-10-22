@@ -32,6 +32,40 @@ public class Employee {
         return new ArrayList<>(jobHistory);
     }
 
+    public List<JobHistoryEntry> addYears(List<JobHistoryEntry> before) {
+        List<JobHistoryEntry> newHistory = new ArrayList<>();
+
+        for (JobHistoryEntry entry: before) {
+            entry = entry.withDuration(entry.getDuration()+1);
+            newHistory.add(entry);
+        }
+
+        return newHistory;
+    }
+
+    public int workExperience() {
+        int workExperience = 0;
+
+        for (JobHistoryEntry value : jobHistory) {
+            workExperience += value.getDuration();
+        }
+
+        return workExperience;
+    }
+
+    public List<JobHistoryEntry> changeQA() {
+        List<JobHistoryEntry> changedList = new ArrayList<>(jobHistory.size());
+
+        for (JobHistoryEntry entry : jobHistory) {
+            if (entry.getPosition().equals("qa")) {
+                entry = entry.withPosition("QA");
+            }
+
+            changedList.add(entry);
+        }
+        return changedList;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
