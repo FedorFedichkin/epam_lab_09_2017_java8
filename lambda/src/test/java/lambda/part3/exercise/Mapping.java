@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
+@SuppressWarnings({"WeakerAccess"})
 public class Mapping {
 
 //    private static List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
