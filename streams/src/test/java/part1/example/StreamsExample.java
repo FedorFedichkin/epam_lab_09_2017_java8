@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.*;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class StreamsExample {
@@ -28,7 +29,10 @@ public class StreamsExample {
                 .toArray(String[]::new);
 //                                                    .collect(Collectors.toList());
 
-        assertEquals(Collections.singletonList("Galt"), johnsLastNames);
+        String[] johns = new String[]{"Galt", "Doe", "White"};
+//        assertEquals(Collections.singletonList("Galt"), johnsLastNames);
+        assertArrayEquals(johns, johnsLastNames);
+
     }
 
     @Test
@@ -82,7 +86,7 @@ public class StreamsExample {
     }
 
     @Test
-    public void checkAgedJohnsExpiriences() {
+    public void checkAgedJohnsExperiences() {
         List<Employee> employees = getEmployees();
 
         // Every aged (>= 25) John has an odd "dev" job experience

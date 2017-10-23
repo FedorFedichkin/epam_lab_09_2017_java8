@@ -8,8 +8,6 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.IntStream;
-import java.util.zip.CheckedInputStream;
 
 import static org.junit.Assert.assertEquals;
 

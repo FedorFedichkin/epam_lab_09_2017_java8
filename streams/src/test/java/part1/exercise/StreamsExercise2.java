@@ -3,9 +3,11 @@ package part1.exercise;
 import data.Employee;
 import data.JobHistoryEntry;
 import data.Person;
+import javafx.util.Pair;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,55 +22,79 @@ public class StreamsExercise2 {
 
     /**
      * Преобразовать список сотрудников в отображение [компания -> множество людей, когда-либо работавших в этой компании].
-     *
+     * <p>
      * Пример.
-     *
+     * <p>
      * Входные данные:
      * Employees = [
-     *    Employee_1 = {
-     *        Person = {"Alex", "Doe", 32},
-     *        JobHistory = [
-     *           {2, "dev", "epam"},
-     *           {3, "dev", "yandex"},
-     *           {1, "dev", "mail"},
-     *        ]
-     *    },
-     *    Employee_2 = {
-     *        Person = {"Adam", "Smith", 25},
-     *        JobHistory = [
-     *           {1, "QA", "yandex"},
-     *           {2, "QA", "mail"},
-     *        ]
-     *    },
-     *    Employee_3 = {
-     *        Person = {"John", "Galt", 27},
-     *        JobHistory = [
-     *           {1, "QA", "epam"},
-     *           {3, "dev", "epam"},
-     *        ]
-     *    }
+     * Employee_1 = {
+     * Person = {"Alex", "Doe", 32},
+     * JobHistory = [
+     * {2, "dev", "epam"},
+     * {3, "dev", "yandex"},
+     * {1, "dev", "mail"},
      * ]
-     *
+     * },
+     * Employee_2 = {
+     * Person = {"Adam", "Smith", 25},
+     * JobHistory = [
+     * {1, "QA", "yandex"},
+     * {2, "QA", "mail"},
+     * ]
+     * },
+     * Employee_3 = {
+     * Person = {"John", "Galt", 27},
+     * JobHistory = [
+     * {1, "QA", "epam"},
+     * {3, "dev", "epam"},
+     * ]
+     * }
+     * ]
+     * <p>
      * Выходные данные:
      * Result = [
-     *    "epam" -> [
-     *       {"Alex", "Doe", 32},
-     *       {"John", "Galt", 27}
-     *    ],
-     *    "yandex" -> [
-     *       {"Alex", "Doe", 32},
-     *       {"Adam", "Smith", 25}
-     *    ],
-     *    "mail" -> [
-     *       {"Alex", "Doe", 32},
-     *       {"Adam", "Smith", 25}
-     *    ]
+     * "epam" -> [
+     * {"Alex", "Doe", 32},
+     * {"John", "Galt", 27}
+     * ],
+     * "yandex" -> [
+     * {"Alex", "Doe", 32},
+     * {"Adam", "Smith", 25}
+     * ],
+     * "mail" -> [
+     * {"Alex", "Doe", 32},
+     * {"Adam", "Smith", 25}
+     * ]
      * ]
      */
+
+    private static class PersonEmployerPair {
+        private Person person;
+        private String employer;
+
+        public Person getPerson() {
+            return person;
+        }
+
+        public String getEmployer() {
+            return employer;
+        }
+
+        public PersonEmployerPair(Person person, String employer) {
+            this.person = person;
+            this.employer = employer;
+        }
+    }
+
+    // TODO // done
     @Test
     public void employersStuffList() {
         List<Employee> employees = getEmployees();
-        Map<String, Set<Person>> result = null; // TODO
+        Map<String, Set<Person>> result = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(), jobHistoryEntry.getEmployer())))
+                .collect(Collectors.groupingBy(classifier -> classifier.getEmployer(),
+                        Collectors.mapping(mapper -> mapper.getPerson(), Collectors.toSet())));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("epam", new HashSet<>(Arrays.asList(
