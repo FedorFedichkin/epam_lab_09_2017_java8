@@ -173,9 +173,17 @@ public class StreamsExercise2 {
      *    ]
      * ]
      */
+
+    // TODO // done
     @Test
     public void indexByFirstEmployer() {
-        Map<String, Set<Person>> result = null; // TODO
+        List<Employee> employees = getEmployees();
+        Map<String, Set<Person>> result = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .limit(1)
+                        .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(), jobHistoryEntry.getEmployer())))
+                .collect(Collectors.groupingBy(classifier -> classifier.getEmployer(),
+                        Collectors.mapping(mapper -> mapper.getPerson(), Collectors.toSet())));
 
 
         Map<String, Set<Person>> expected = new HashMap<>();
